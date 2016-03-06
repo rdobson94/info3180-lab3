@@ -8,7 +8,8 @@ This file creates your application.
 
 from app import app
 from flask import render_template, request, redirect, url_for
-
+import time
+from  sendemail import *
 
 ###
 # Routing for your application.
@@ -18,6 +19,19 @@ from flask import render_template, request, redirect, url_for
 def home():
     """Render website's home page."""
     return render_template('home.html')
+    
+@app.route('/contact')
+def contact():
+	error=None 
+	if request.method=='POST':
+		send_mail('r.dobson1094@gmail.com',request.form['name'],request.form['email'],request.form['mymessage'],request.form['subject'])
+	elif request.form['name']=="":
+		error='error, name is null'
+	return render_template('contact.html')    
+
+@app.route('/profile')
+def profile():
+  return render_template('profile.html',time=timeinfo())	
 
 
 @app.route('/about/')
@@ -46,6 +60,10 @@ def add_header(response):
     response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
     response.headers['Cache-Control'] = 'public, max-age=600'
     return response
+
+def timeinfo():
+     now = time.strftime("%c")
+     return now    
 
 
 @app.errorhandler(404)
